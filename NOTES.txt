@@ -1,0 +1,35 @@
+Pros:
+- Doesn't crash
+- Adds a payload
+- Does unicode and str in Python 2, and unicode in 3 (it's all UCS4 under the hood)
+- Can be used commercially, as it has a freer license than the GPL
+- Does the 'compilation' (generation of failure links) on-demand
+
+Cons:
+- Uses more memory
+- Probably slower (did I mention it doesn't crash, and works with Unicode?)
+- Requires a C++ compiler
+- Does not allow overlap (could perhaps add it but...)
+- Does not have the equivalent of 'chases'
+
+clean up comments
+make a setup.py that doesn't do Cython
+check the 'out U out + out(failure)' thing...
+
+if we're going to be perfectionist we should use the 'advance the pointer'
+  method; it takes complexity out of the find_... routines.
+# rename package to yaaho
+# maybe make find_all -> findall and longest -> long
+# get rid of state preservation (we don't care)
+# get rid of debug statements
+# Make it on-demand 'make'ing
+# rename stuff
+# add str support
+# add one-off support
+
+
+to test:
+memory leak, with payloads
+overlaps; containment
+# payloads
+# Look up Danny Yoo's tests, steal + adapt for our own.
