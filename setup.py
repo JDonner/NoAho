@@ -8,7 +8,7 @@ noaho_module = Extension("noaho",
 
 version = 0.9
 
-setup(name = "Not-Quite Aho-Corasick",
+setup(name = "Not Quite Aho-Corasick",
       author="Jeff Donner",
       author_email="jeffrey.donner@gmail.com",
       maintainer="Jeff Donner",

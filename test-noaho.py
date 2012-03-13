@@ -80,16 +80,15 @@ class AhoCorasickTest(unittest.TestCase):
     def test_find_longest_with_no_match(self):
         self.tree.add("foobar")
 #        self.tree.compile()
-        self.assertEqual(None, self.tree.find_long("fooba"))
+        self.assertEqual((None, None, None), self.tree.find_long("fooba"))
 
 
     def test_with_expected_non_match(self):
         """Check to see that we don't always get a successful match."""
         self.tree.add("wise man")
 #        self.tree.compile()
-        self.assertEqual(
-            None,
-            self.tree.find("where fools and wise men fear to tread"))
+        self.assertEqual((None, None, None),
+                         self.tree.find("where fools and wise men fear to tread"))
 
 
     def test_empty_construction(self):
@@ -105,7 +104,7 @@ class AhoCorasickTest(unittest.TestCase):
         """Check to see if we can accept embedded nulls"""
         self.tree.add("hell\0 world")
 #        self.tree.compile()
-        self.assertEqual(None, self.tree.find("ello\0 world"))
+        self.assertEqual((None, None, None), self.tree.find("ello\0 world"))
         self.assertEqual((0, 11, None), self.tree.find("hell\0 world"))
 
 

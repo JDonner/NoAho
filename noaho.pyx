@@ -106,7 +106,7 @@ cdef class NoAho:
                                                &start, &end)
         py_payload = py_from_void_payload(void_payload)
         if start == end:
-            return None
+            return None, None, None
         else:
             return start, end, py_payload
 
@@ -123,7 +123,7 @@ cdef class NoAho:
                                                  &start, &end)
         py_payload = py_from_void_payload(void_payload)
         if start == end:
-            return None
+            return None, None, None
         else:
             return start, end, py_payload
 
