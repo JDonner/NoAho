@@ -54,9 +54,12 @@ cdef extern from "array-aho.h":
         void compile()
         void* find_short(char* text, int len,
                          int* out_start, int* out_end)
-
         void* find_longest(char* text, int len,
                            int* out_start, int* out_end)
+        int num_keys()
+        void* get_payload(char* text, int len)
+        int contains(char* text, int len)
+
 
 cdef class NoAho:
     cdef AhoCorasickTrie *thisptr
@@ -69,6 +72,31 @@ cdef class NoAho:
         for payload in self.payloads_to_decref:
             Py_DECREF(payload)
         del self.thisptr
+
+    def __len__(self):
+        return self.thisptr.num_keys()
+
+    def __contains__(self, key_text):
+        cdef bytes ucs4_data
+        cdef int num_ucs4_chars
+        ucs4_data, num_ucs4_chars = get_as_ucs4(key_text)
+        return self.thisptr.contains(ucs4_data, num_ucs4_chars)
+
+    def __getitem__(self, text):
+        cdef bytes ucs4_data
+        cdef int num_ucs4_chars
+        cdef void* void_payload
+        ucs4_data, num_ucs4_chars = get_as_ucs4(text)
+        void_payload = self.thisptr.get_payload(ucs4_data, num_ucs4_chars)
+        py_payload = py_from_void_payload(void_payload)
+        return py_payload
+
+    def __setitem__(self, text, py_payload):
+        self.add(text, py_payload)
+
+# This is harder...
+#    def __iter__(self):
+#        return
 
     def add(self, text, py_payload = None):
         cdef bytes ucs4_data
@@ -93,7 +121,7 @@ cdef class NoAho:
     def compile(self):
         self.thisptr.compile()
 
-    def find(self, text):
+    def find_short(self, text):
         cdef int start, end
         cdef bytes ucs4_data
         cdef int num_ucs4_chars
@@ -128,7 +156,7 @@ cdef class NoAho:
             return start, end, py_payload
 
 # http://thread.gmane.org/gmane.comp.python.cython.user/1920/focus=1921
-    def findall(self, text):
+    def findall_short(self, text):
         cdef bytes ucs4_data
         cdef int num_ucs4_chars
         ucs4_data, num_ucs4_chars = get_as_ucs4(text)

@@ -123,8 +123,12 @@ public:
 
    void print() const;
 
-   // For testing only
-   bool contains(AC_CHAR_TYPE const*, size_t n) const;
+   int contains(char const*, size_t n) const;
+
+   int num_keys() const;
+
+   PayloadT get_payload(char const* s, size_t n) const;
+
 
 private:
    static bool is_valid(Index ichild) { return 0 <= ichild; }

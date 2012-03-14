@@ -23,7 +23,7 @@ bool test_contains(AhoCorasickTrie const& t, string s, bool expect = true)
 {
    Chars k = to_chars(s.c_str());
 
-   bool found = t.contains(k.data(), k.size());
+   bool found = t.contains((char*)k.data(), k.size());
    if (found != expect) {
       cout << "FAIL: [" << s << "]" << (found ? " found" : " not found") << endl;
    }

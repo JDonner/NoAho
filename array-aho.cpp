@@ -104,17 +104,49 @@ void AhoCorasickTrie::add_string(char const* char_s, size_t n,
 }
 
 
-// For testing only
-bool AhoCorasickTrie::contains(AC_CHAR_TYPE const* s, size_t n) const
+int AhoCorasickTrie::contains(char const* char_s, size_t n) const
 {
+   AC_CHAR_TYPE const* c = reinterpret_cast<AC_CHAR_TYPE const*>(char_s);
    Index inode = 0;
-   for (size_t i = 0; i < n; ++i, ++s) {
-      inode = nodes[inode].child_at(*s);
-      if (not is_valid(inode)) {
-         return false;
+   for (size_t i = 0; i < n; ++i, ++c) {
+      inode = nodes[inode].child_at(*c);
+      if (inode < 0) {
+         return 0;
       }
    }
-   return 0 < nodes[inode].length;
+
+   return nodes[inode].length ? 1 : 0;
+}
+
+int AhoCorasickTrie::num_keys() const
+{
+   int num = 0;
+   for (Nodes::const_iterator it = nodes.begin(), end = nodes.end();
+        it != end; ++it) {
+      if (it->length)
+         ++num;
+   }
+
+   return num;
+}
+
+PayloadT
+AhoCorasickTrie::get_payload(char const* s, size_t n) const
+{
+   PayloadT payload;
+   AC_CHAR_TYPE const* ucs4 = (AC_CHAR_TYPE const*)s;
+   AC_CHAR_TYPE const* u = ucs4;
+
+   Node::Index inode = 0;
+   for (u = ucs4; u < ucs4 + n; ++u) {
+      inode = nodes[inode].child_at(*u);
+      if (inode < 0)
+         return (PayloadT)0;
+   }
+   if (nodes[inode].length)
+      return nodes[inode].payload;
+   else
+      return (PayloadT)0;
 }
 
 
