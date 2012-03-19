@@ -8,13 +8,31 @@ noaho_module = Extension("noaho",
 
 version = 0.9
 
-setup(name = "Not Quite Aho-Corasick",
+setup(name = "Non-Overlapping Aho-Corasick",
       author="Jeff Donner",
       author_email="jeffrey.donner@gmail.com",
       maintainer="Jeff Donner",
       maintainer_email="jeffrey.donner@gmail.com",
       url="http://pypi.python.org/pypi/noaho",
-      description="Non-overlapping simultaneous multi-key search",
+      download_url="http://pypi.python.org/packages/source/n/noaho/noaho-0.9.tar.gz" % version,
+      description="Fast, non-overlapping simultaneous multiple keyword search",
       long_description = open('README.txt').read(),
-      ext_modules = [noaho_module]
+      ext_modules = [noaho_module],
+
+      classifiers = [
+        'Intended Audience :: Developers',
+        'Intended Audience :: Information Technology',
+        'License :: OSI Approved :: MIT License',
+        'Programming Language :: C++',
+        'Programming Language :: Cython',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.0',
+        'Programming Language :: Python :: 3.1',
+        'Programming Language :: Python :: 3.2',
+        'Operating System :: OS Independent',
+        'Topic :: Text Processing',
+        ]
       )

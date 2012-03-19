@@ -20,7 +20,7 @@
 # OTHER DEALINGS IN THE SOFTWARE.
 # ('expat' version of the MIT license)
 
-# rm -f noaho.cpp && rm -rf build && rm -rf .objs && rm -f *.so && python3 cython_setup.py build_ext --inplace
+# rm -f noaho.cpp && rm -rf build && rm -rf .objs && rm -f *.so && python3 cython_deep_build_setup.py build_ext --inplace
 
 from cpython.ref cimport Py_INCREF
 from cpython.ref cimport Py_DECREF
