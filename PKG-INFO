@@ -1,0 +1,31 @@
+Metadata-Version: 1.0
+Version: 0.9
+Summary: Fast, non-overlapping simultaneous multiple keyword search
+Home-Page: "http://pypi.python.org/pypi/noaho"
+Author: Jeff Donner
+Author-email: jeffrey.donner@gmail.com
+License: MIT
+Download-URL: http://pypi.python.org/packages/source/n/noaho/noaho-0.9.tar.gz
+Description: NoAho
+does fast, simultaneous multi-keyword search using the Aho Corasick
+algorithm, except that if keywords overlap in the target text, only
+the first appearing, or first+longest one will be found. In addition
+you can associate any Python object with each keyword (it supports
+much of the mapping protocol), and works for Python 2.7 (at least -
+maybe earlier) for any mixture of str and unicode types, and 3.x.
+
+
+Intended Audience :: Developers
+Intended Audience :: Information Technology
+License :: OSI Approved :: MIT License
+Development Status :: 4 - Beta
+Programming Language :: C++
+Programming Language :: Cython
+Programming Language :: Python :: 2
+Programming Language :: Python :: 2.7
+Programming Language :: Python :: 3
+Programming Language :: Python :: 3.0
+Programming Language :: Python :: 3.1
+Programming Language :: Python :: 3.2
+Operating System :: OS Independent
+Topic :: Text Processing
