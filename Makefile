@@ -1,5 +1,5 @@
-CXXFLAGS=-std=c++0x -Wall -Wextra -Wno-unused-variable
-CXX=g++ -pthread -g
+CXXFLAGS=-O2 -Wall -Wextra -Wno-unused-variable
+CXX=g++
 INCLUDE=-I/usr/include
 SOURCES=array-aho.cpp test-array-aho.cpp
 OBJDIR=.objs
