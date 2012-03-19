@@ -86,8 +86,15 @@ cdef class NoAho:
         cdef bytes ucs4_data
         cdef int num_ucs4_chars
         cdef void* void_payload
+        cdef long long payload_as_int
         ucs4_data, num_ucs4_chars = get_as_ucs4(text)
         void_payload = self.thisptr.get_payload(ucs4_data, num_ucs4_chars)
+        payload_as_int = <long long>void_payload
+        # No valid ptr has the lowest 3 bits set, thus we can smuggle
+        # a signal in there that the key wasn't present (-1, which has
+        # all bits set).
+        if payload_as_int == -1:
+            raise KeyError(text)
         py_payload = py_from_void_payload(void_payload)
         return py_payload
 
@@ -104,6 +111,9 @@ cdef class NoAho:
         cdef void* void_payload
 
         ucs4_data, num_ucs4_chars = get_as_ucs4(text)
+
+        if num_ucs4_chars == 0:
+            raise ValueError("Key cannot be empty (would cause Aho-Corasick automaton to spin)")
 
         if py_payload is None:
             void_payload = <void*>0
@@ -188,6 +198,10 @@ cdef class AhoIterator:
         self.start = 0
         self.end = 0
         self.want_longest = want_longest
+
+    # I belieeeeve we don't need a __dealloc__ here, that Cython bumps
+    # Python objects (self.aho_obj when I assign, and derefs them
+    # when we die.
 
     def __iter__(self):
         return self

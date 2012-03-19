@@ -127,6 +127,7 @@ public:
 
    int num_keys() const;
 
+   /// Returns either a valid ptr (including 0) or, -1 cast as a ptr.
    PayloadT get_payload(char const* s, size_t n) const;
 
 

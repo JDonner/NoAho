@@ -1,9 +1,8 @@
 
-
 ######!/usr/bin/env python
 """Unit tests for Aho Corasick keyword string searching.
 Many tests copyright Danny Yoo, the rest copyright Jeff Donner.
-Because I think Danny's tests were GPL, so now is this whole file.
+Because I think Danny's tests were GPL, so, now, is this whole file.
 So, if you distribute this test code you must also distribute .. uh,
 this test code (this doesn't apply to the whole package).
 Jeff Donner, jeffrey.donner@gmail.com
@@ -21,16 +20,17 @@ class AhoCorasickTest(unittest.TestCase):
     def tearDown(self):
         self.tree = None
 
+
     def test_keyword_as_prefix_of_another(self):
         """According to John, there's a problem with the matcher.
         this test case should expose the bug."""
         self.tree.add('foobar')
         self.tree.add('foo')
         self.tree.add('bar')
-#        self.tree.compile()
         self.assertEqual((3, 6, None), self.tree.find_short('xxxfooyyy'))
         self.assertEqual((0, 3, None), self.tree.find_short('foo'))
         self.assertEqual((3, 6, None), self.tree.find_short('xxxbaryyy'))
+
 
     def test_another_find(self):
         """Just to triangulate the search code.  We want to make sure
@@ -38,7 +38,6 @@ class AhoCorasickTest(unittest.TestCase):
         least."""
         self.tree.add("Python")
         self.tree.add("PLT Scheme")
-#        self.tree.compile()
         self.assertEqual((19, 25, None),
                          self.tree.find_short("I am learning both Python and PLT Scheme"))
         self.assertEqual((0, 10, None),
@@ -48,7 +47,6 @@ class AhoCorasickTest(unittest.TestCase):
     def test_simple_construction(self):
         self.tree.add("foo")
         self.tree.add("bar")
-#        self.tree.compile()
         self.assertEqual((10, 13, None),
                          self.tree.find_short("this is a foo message"))
 
@@ -56,45 +54,40 @@ class AhoCorasickTest(unittest.TestCase):
     def test_find_longest(self):
         self.tree.add("a")
         self.tree.add("alphabet");
-#        self.tree.compile()
         self.assertEqual((0, 1, None), self.tree.find_short("alphabet soup"));
         self.assertEqual((0, 8, None), self.tree.find_long("alphabet soup"))
         self.assertEqual((13, 14, None), self.tree.find_long("yummy, I see an alphabet soup bowl"))
+
 
     def test_find_with_whole_match(self):
         """Make sure that longest search will match the whole string."""
         longString = "supercalifragilisticexpialidocious"
         self.tree.add(longString)
-#        self.tree.compile()
         self.assertEqual((0, len(longString), None),
                          self.tree.find_short(longString))
+
 
     def test_find_longest_with_whole_match(self):
         """Make sure that longest search will match the whole string."""
         longString = "supercalifragilisticexpialidocious"
         self.tree.add(longString)
-#        self.tree.compile()
         self.assertEqual((0, len(longString), None),
                          self.tree.find_long(longString))
 
     def test_find_longest_with_no_match(self):
         self.tree.add("foobar")
-#        self.tree.compile()
         self.assertEqual((None, None, None), self.tree.find_long("fooba"))
 
 
     def test_with_expected_non_match(self):
         """Check to see that we don't always get a successful match."""
         self.tree.add("wise man")
-#        self.tree.compile()
         self.assertEqual((None, None, None),
                          self.tree.find_short("where fools and wise men fear to tread"))
 
 
-    def test_empty_key(self):
-        # Doesn't crash or throw, but nothing happens
-        self.tree.add("")
-        self.assertEqual((None, None, None), self.tree.find_short("oh solo mio"))
+    def test_reject_empty_key(self):
+        self.assertRaises(ValueError, self.tree.add, "")
 
 
     def test_empty_construction(self):
@@ -106,27 +99,25 @@ class AhoCorasickTest(unittest.TestCase):
         tree = noaho.NoAho()
         del tree
 
+
     def test_embedded_nulls(self):
         """Check to see if we can accept embedded nulls"""
         self.tree.add("hell\0 world")
-#        self.tree.compile()
         self.assertEqual((None, None, None), self.tree.find_short("ello\0 world"))
         self.assertEqual((0, 11, None), self.tree.find_short("hell\0 world"))
 
 
     def test_embedded_nulls_again(self):
         self.tree.add("\0\0\0")
-#        self.tree.compile()
         self.assertEqual((0, 3, None), self.tree.find_short("\0\0\0\0\0\0\0\0"))
 
 
-    def test_find_all_and_find_all_longest(self):
+    def test_findall_and_findall_longest(self):
         self.tree.add("python")
         self.tree.add("perl")
         self.tree.add("scheme")
         self.tree.add("java")
         self.tree.add("pythonperl")
-#        self.tree.compile()
         self.assertEqual([(0, 6, None), (6, 10, None), (10, 16, None), (16, 20, None)],
                          list(self.tree.findall_short("pythonperlschemejava")))
         self.assertEqual([(0, 10, None), (10, 16, None), (16, 20, None)],
@@ -137,8 +128,23 @@ class AhoCorasickTest(unittest.TestCase):
                          list(self.tree.findall_long("no pascal here")))
 
 
-    def test_add_find_add_find_short(self):
-        pass
+    def test_add_and_find_mix_freely(self):
+        text = """We got pickles and crocks, We got bagels and lox"""
+        self.tree.add('lox')
+        self.assertEqual((45, 48, None), self.tree.find_long(text))
+        self.tree.add('pickles')
+        self.assertEqual((7, 14, None), self.tree.find_long(text))
+
+
+    def test_explicit_compilation_still_ok(self):
+        # ... but vestigial
+        text = """We got pickles and crocks, We got bagels and lox"""
+        self.tree["lox"] = None
+        self.tree.compile()
+        self.assertEqual((45, 48, None), self.tree.find_long(text))
+        self.tree["pickles"] = None
+        self.assertEqual((7, 14, None), self.tree.find_long(text))
+
 
     def test_payload(self):
         class RandomClass(object):
@@ -165,9 +171,26 @@ class AhoCorasickTest(unittest.TestCase):
         self.tree['foo'] = 5
         self.assertEqual(5, self.tree['foo'])
 
-    def test_dict_style_set_empty(self):
-        self.tree[''] = 5
-        self.assertEqual(None, self.tree[''])
+
+    def test_dict_style_set_empty_key(self):
+        # equivalent to self.tree[''] = None
+        # __setitem__ implements this part of the [] protocol
+        self.assertRaises(ValueError, self.tree.__setitem__, '', None)
+
+
+    def test_dict_style_set_nonstring_key(self):
+        # equivalent to self.tree[''] = None
+        # __setitem__ implements this part of the [] protocol
+        self.assertRaises(ValueError, self.tree.__setitem__, 6, None)
+        self.assertRaises(ValueError, self.tree.__setitem__, None, None)
+        self.assertRaises(ValueError, self.tree.__setitem__, [], None)
+
+
+    def test_dict_style_get_unseen_key(self):
+        # __getitem__ implements this part of the [] protocol
+        self.assertRaises(KeyError, self.tree.__getitem__, 'unseen')
+        self.assertRaises(KeyError, self.tree.__getitem__, '')
+
 
     def test_dict_style_containment(self):
         self.tree['foo'] = 5
@@ -178,11 +201,13 @@ class AhoCorasickTest(unittest.TestCase):
         self.assertEqual(False, 'oo' in self.tree)
         self.assertEqual(False, 'f' in self.tree)
 
+
     def test_dict_style_len(self):
-        self.tree['foo'] = None
-        self.tree['barsoom'] = [1,2]
-        self.tree['quux'] = 12
+        self.tree['a'] = None
+        self.tree['b'] = [1,2]
+        self.tree['c'] = 12
         self.assertEqual(3, len(self.tree))
+
 
     # reminder that we need to figure out which version we're in, and
     # test Python 2 unicode explicitly
@@ -190,13 +215,14 @@ class AhoCorasickTest(unittest.TestCase):
     def test_unicode_in_python2(self):
         self.assertEqual(True, False)
 
+    # key iteration is unimplemented
     @unittest.expectedFailure
-    # iteration is unimplemented
     def test_iteration(self):
         self.tree.add("Harry")
         self.tree.add("Hermione")
         self.tree.add("Ron")
         self.assertEqual(set("Harry", "Hermione", "Ron"), set(self.tree.keys()))
+
 
     # reminder that we need to implement this
     @unittest.expectedFailure

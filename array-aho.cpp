@@ -130,8 +130,7 @@ int AhoCorasickTrie::num_keys() const
    return num;
 }
 
-PayloadT
-AhoCorasickTrie::get_payload(char const* s, size_t n) const
+PayloadT AhoCorasickTrie::get_payload(char const* s, size_t n) const
 {
    PayloadT payload;
    AC_CHAR_TYPE const* ucs4 = (AC_CHAR_TYPE const*)s;
@@ -141,12 +140,12 @@ AhoCorasickTrie::get_payload(char const* s, size_t n) const
    for (u = ucs4; u < ucs4 + n; ++u) {
       inode = nodes[inode].child_at(*u);
       if (inode < 0)
-         return (PayloadT)0;
+         return (PayloadT)-1;
    }
    if (nodes[inode].length)
       return nodes[inode].payload;
    else
-      return (PayloadT)0;
+      return (PayloadT)-1;
 }
 
 
