@@ -6,7 +6,7 @@ noaho_module = Extension("noaho",
                          depends = ["array-aho.h", "HashMap.h", "LinearHashTable.h"]
                          )
 
-version = 0.9
+version = "0.9"
 
 setup(name = "Non-Overlapping Aho-Corasick",
       author="Jeff Donner",
@@ -14,7 +14,7 @@ setup(name = "Non-Overlapping Aho-Corasick",
       maintainer="Jeff Donner",
       maintainer_email="jeffrey.donner@gmail.com",
       url="http://pypi.python.org/pypi/noaho",
-      download_url="http://pypi.python.org/packages/source/n/noaho/noaho-0.9.tar.gz" % version,
+      download_url="http://pypi.python.org/packages/source/n/noaho/noaho-%s.tar.gz" % version,
       description="Fast, non-overlapping simultaneous multiple keyword search",
       long_description = open('README.txt').read(),
       ext_modules = [noaho_module],
