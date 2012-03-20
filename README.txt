@@ -1,26 +1,27 @@
-Non-Overlapping Aho-Corasick
+Non-Overlapping Aho-Corasick Trie
 
 Features:
-- 'short' and 'long' (longest key) searches, both one-off and iteration
-  over all in some text (non-overlapping). (Short probably isn't useful
-  without overlap.)
+- 'short' and 'long' (longest matching key) searches, both one-off and
+  iteration over all non-overlapping keyword matches in some text.
 - Works with both unicode and str in Python 2, and unicode in Python 3
   (it's all UCS4 under the hood).
 - Allows you to associate an arbitrary Python object payload with each
-  keyword, and supports dict operations len, [], and 'in' for the
+  keyword, and supports dict operations len(), [], and 'in' for the
   keywords (though no del or traversal).
 - Does the 'compilation' (generation of Aho-Corasick failure links) of
   the trie on-demand; you can mix adding keywords and searching text
   freely.
-- Can be used commercially, it has a minimal license.
+- Can be used commercially, it's under the minimal, MIT license.
 
 Anti-Features:
-- Does not support overlapping keywords, unless you move along the
-  string manually, one character at a time, which would defeat the
-  purpose.
-- find[all]_short is kind of useless.
+- Will not find overlapped keywords (eg given keywords "abcde" and
+  'defgh", will not find "defgh" in "abcdefgh"; would find both in
+  "abcdedefgh"), unless you move along the string manually, one
+  character at a time, which would defeat the purpose. The package
+  'Acora' is an alternative package for this use.
+- Lacking overlap, find[all]_short is kind of useless.
 - Lacks key iteration and deletion from the mapping (dict) protocol
-- memory leaking untested (should be ok but ...)
+- Memory leaking untested (should be ok but ...)
 - No /testcase/ for unicode in Python 2 (did manual test however)
 - Unicode chars represented as ucs4, and, each character has its own
   hashtable, so it's relatively memory-heavy.
@@ -37,13 +38,20 @@ or
   # Python 3
   python3 setup.py install # (or build, and copy the .so to where you want it)
 
-
+API:
+    from noaho.noaho import NoAho
+    trie = NoAho()
 'text' below applies to str and unicode in Python 2, or unicode in Python 3 (all there is)
-    t.add(key_text, optional payload)
-    (start, end, key_payload) = t.find_short(text_to_search)
-    (start, end, key_payload) = t.find_long(text_to_search)
-    (start, end, key_payload) = t.findall_short(text_to_search)
-    (start, end, key_payload) = t.findall_long(text_to_search)
+    trie.add(key_text, optional payload)
+    (key_start, key_end, key_value) = trie.find_short(text_to_search)
+    (key_start, key_end, key_value) = trie.find_long(text_to_search)
+    (key_start, key_end, key_value) = trie.findall_short(text_to_search)
+    (key_start, key_end, key_value) = trie.findall_long(text_to_search)
+    # keyword = text_to_search[key_start:key_end]
+    trie['keyword] = key_value
+    key_value = trie.find_long(text_to_search)
+    assert len(trie)
+    assert keyword in trie
 
 Examples:
     >>> a = NoAho()
@@ -51,6 +59,7 @@ Examples:
     >>> a.add('ms windows 2000', "this is canonical")
     >>> a.add('windows', None)
     >>> a.add('windows 2000')
+    >>> a['apple'] = None
     >>> text = 'windows 2000 ms windows 2000 windows'
     >>> for k in a.findall_short(text):
     ...     print text[k[0]:k[1]]
@@ -82,7 +91,7 @@ to leave plain 'find[all]' free if overlapping matches are ever implemented.
 
 
 Deep Rebuilding:
-Written in C++ and Cython.
+(Needs C++ and Cython.)
 
 You should not need to use Cython to build and use this module, but if
 you want to change it and regenerate, there's a build command line at
@@ -93,7 +102,7 @@ version though, you'd have to manually use a c++ compiler to do the
 last step, of linking).
 
 
-For the fullest spec of what the code will and will not so, check out
+For the fullest spec of what the code will and will not do, check out
 test-noaho.py (python[3] test-noaho.py)
 
 Untested: whether the payload handling is complete, ie that there are no

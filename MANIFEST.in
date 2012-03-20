@@ -1,0 +1,4 @@
+exclude *.py *.txt
+include setup.py test-noaho.py
+include MANIFEST.in LICENSE.txt README.txt
+recursive-include noaho *.py *.pyx *.cpp *.h

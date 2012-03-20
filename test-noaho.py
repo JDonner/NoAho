@@ -9,13 +9,13 @@ Jeff Donner, jeffrey.donner@gmail.com
 """
 
 import sys
-import noaho
+from noaho.noaho import NoAho
 import unittest
 
 
 class AhoCorasickTest(unittest.TestCase):
     def setUp(self):
-        self.tree = noaho.NoAho()
+        self.tree = NoAho()
 
     def tearDown(self):
         self.tree = None
@@ -96,7 +96,7 @@ class AhoCorasickTest(unittest.TestCase):
         implementation assumes keywords exist on its dealloc, so we
         have to do some work on the back end to avoid silly segmentation
         errors."""
-        tree = noaho.NoAho()
+        tree = NoAho()
         del tree
 
 

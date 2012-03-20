@@ -2,13 +2,15 @@ from distutils.core import setup
 from distutils.extension import Extension
 
 noaho_module = Extension("noaho",
-                         sources = ["noaho.cpp", "array-aho.cpp"],
-                         depends = ["array-aho.h", "HashMap.h", "LinearHashTable.h"]
+                         sources = ["noaho/noaho.cpp", "noaho/array-aho.cpp"],
+                         depends = ["noaho/array-aho.h", "noaho/HashMap.h", "noaho/LinearHashTable.h",
+                                    'noaho/noaho.pyx']
                          )
 
 version = "0.9"
 
-setup(name = "Non-Overlapping Aho-Corasick",
+setup(name = "NoAho",
+      version=version,
       author="Jeff Donner",
       author_email="jeffrey.donner@gmail.com",
       maintainer="Jeff Donner",
@@ -18,6 +20,7 @@ setup(name = "Non-Overlapping Aho-Corasick",
       description="Fast, non-overlapping simultaneous multiple keyword search",
       long_description = open('README.txt').read(),
       ext_modules = [noaho_module],
+      packages = ['noaho'],
 
       classifiers = [
         'Intended Audience :: Developers',
