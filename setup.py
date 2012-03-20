@@ -7,7 +7,7 @@ noaho_module = Extension("noaho",
                                     'noaho/noaho.pyx']
                          )
 
-version = "0.9"
+version = "0.9.02"
 
 setup(name = "NoAho",
       version=version,
@@ -15,8 +15,8 @@ setup(name = "NoAho",
       author_email="jeffrey.donner@gmail.com",
       maintainer="Jeff Donner",
       maintainer_email="jeffrey.donner@gmail.com",
-      url="http://pypi.python.org/pypi/noaho",
-      download_url="http://pypi.python.org/packages/source/n/noaho/noaho-%s.tar.gz" % version,
+      url="https://github.com/JDonner/NoAho",
+      download_url="http://pypi.python.org/packages/source/N/NoAho/NoAho-%s.tar.gz" % version,
       description="Fast, non-overlapping simultaneous multiple keyword search",
       long_description = open('README.txt').read(),
       ext_modules = [noaho_module],
