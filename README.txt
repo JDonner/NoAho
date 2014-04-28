@@ -3,15 +3,23 @@ Non-Overlapping Aho-Corasick Trie
 Features:
 - 'short' and 'long' (longest matching key) searches, both one-off and
   iteration over all non-overlapping keyword matches in some text.
-- Works with both unicode and str in Python 2, and unicode in Python 3
-  (it's all UCS4 under the hood).
+- Works with both unicode and str in Python 2, and unicode in Python 3.
+  NOTE: As everything is simply single UCS4 / UTF-32 codepoints under the
+  hood, all substrings and input unicode must be normalized, ie any separate modifying marks must be
+  folded into each codepoint. See:
+     http://stackoverflow.com/questions/16467479/normalizing-unicode
+  Or, theoretically, you could put into the tree all forms of the
+  keywords you expect to see in your text. This is untested but it
+  would probably work.
 - Allows you to associate an arbitrary Python object payload with each
   keyword, and supports dict operations len(), [], and 'in' for the
   keywords (though no del or traversal).
 - Does the 'compilation' (generation of Aho-Corasick failure links) of
-  the trie on-demand; you can mix adding keywords and searching text
-  freely.
-- Can be used commercially, it's under the minimal, MIT license.
+  the trie on-demand, ie you could mix adding keywords and searching
+  text, freely, but mostly it just relieves you of worrying about
+  compiling.
+- Can be used commercially, it's under the minimal, MIT license (if you
+  somehow need a different license, ask me, I mean for it to be used).
 
 Anti-Features:
 - Will not find overlapped keywords (eg given keywords "abcde" and
@@ -24,7 +32,7 @@ Anti-Features:
 - Memory leaking untested (should be ok but ...)
 - No /testcase/ for unicode in Python 2 (did manual test however)
 - Unicode chars represented as ucs4, and, each character has its own
-  hashtable, so it's relatively memory-heavy.
+  hashtable, so it's relatively memory-heavy, but that's life nowadays.
 - Requires a C++ compiler.
 
 Bug reports and patches welcome of course!
@@ -33,10 +41,10 @@ Bug reports and patches welcome of course!
 
 To build and install, use either
   # Python 2
-  python setup.py install # (or build, and copy the .so to where you want it)
+  python setup.py install # (or ... build, and copy the .so to where you want it)
 or
   # Python 3
-  python3 setup.py install # (or build, and copy the .so to where you want it)
+  python3 setup.py install # (or ... build, and copy the .so to where you want it)
 
 API:
     from noaho.noaho import NoAho

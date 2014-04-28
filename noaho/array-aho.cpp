@@ -21,12 +21,14 @@
 // SOFTWARE.
 // (MIT 'expat' license)
 
+// Description of Aho-Corasick:
+//   http://www.cs.uku.fi/~kilpelai/BSA05/lectures/slides04.pdf
+
 #include "array-aho.h"
 #include <queue>
 #include <iostream>
 #include <utility>
 
-// http://www.cs.uku.fi/~kilpelai/BSA05/lectures/slides04.pdf
 
 using namespace std;
 
@@ -44,6 +46,7 @@ std::ostream& operator<<(std::ostream& os, Node const& node)
    return os;
 }
 
+
 std::ostream& operator<<(std::ostream& os, AhoCorasickTrie::Chars const& text)
 {
    for (AhoCorasickTrie::Chars::const_iterator i = text.begin(), end = text.end();
@@ -52,6 +55,7 @@ std::ostream& operator<<(std::ostream& os, AhoCorasickTrie::Chars const& text)
    }
    return os;
 }
+
 
 std::ostream& operator<<(std::ostream& os, AhoCorasickTrie::Strings const& texts)
 {
@@ -118,6 +122,7 @@ int AhoCorasickTrie::contains(char const* char_s, size_t n) const
    return nodes[inode].length ? 1 : 0;
 }
 
+
 int AhoCorasickTrie::num_keys() const
 {
    int num = 0;
@@ -130,9 +135,9 @@ int AhoCorasickTrie::num_keys() const
    return num;
 }
 
+
 PayloadT AhoCorasickTrie::get_payload(char const* s, size_t n) const
 {
-   PayloadT payload;
    AC_CHAR_TYPE const* ucs4 = (AC_CHAR_TYPE const*)s;
    AC_CHAR_TYPE const* u = ucs4;
 
@@ -163,7 +168,6 @@ void AhoCorasickTrie::make_failure_links()
    }
    // root fails to root
    nodes[0].ifailure_state = 0;
-   //   q.push(root);
 
    while (not q.empty()) {
       Node* r = q.front();
@@ -181,8 +185,7 @@ void AhoCorasickTrie::make_failure_links()
             ifail_child = this->child_at(ifail_state, a);
          }
          s->ifailure_state = ifail_child;
-         // we were not an accept state, but now we are.
-         //         s->output = s->ifailure_state.output;
+
          if (not s->length) {
             s->length = nodes[s->ifailure_state].length;
             s->payload = nodes[s->ifailure_state].payload;
@@ -192,6 +195,7 @@ void AhoCorasickTrie::make_failure_links()
 
    is_compiled = true;
 }
+
 
 void AhoCorasickTrie::clear_failure_links()
 {
@@ -213,7 +217,6 @@ PayloadT AhoCorasickTrie::find_short(char const* char_s, size_t n,
    Index istate = 0;
    PayloadT last_payload = 0;
    AC_CHAR_TYPE const* original_start = reinterpret_cast<AC_CHAR_TYPE const*>(char_s);
-//int original_istart = *inout_istart;
    AC_CHAR_TYPE const* start = original_start + *inout_istart;
    AC_CHAR_TYPE const* end = original_start + n;
 
@@ -280,6 +283,8 @@ PayloadT AhoCorasickTrie::find_longest(char const* char_s, size_t n,
    return payload;
 }
 
+
+// Debugging
 AhoCorasickTrie::Strings
 AhoCorasickTrie::follow_failure_chain(Node::Index inode,
                                       AhoCorasickTrie::Chars chars, int istart,
@@ -305,10 +310,10 @@ cout << lo << ".." << hi << endl;
    return strings;
 }
 
-// This is crap
+
+// For debugging.
 void AhoCorasickTrie::print() const
 {
-//   cout << "maybe printing" << endl;
    typedef pair<AC_CHAR_TYPE, Index> Pair;
    queue<Pair> q;
    q.push(make_pair((AC_CHAR_TYPE)'@', 0));
