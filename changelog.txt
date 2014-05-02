@@ -1,0 +1,6 @@
+2014-05-01, 0.9.4
+* Incorporated setup.py change from Balthazar Roubero to make it install
+  properly with pip.
+* Dropped the initial directory name from the noaho module, ie,
+  previously you'd import noaho.noaho, now it's just import noaho.
+* Cleaned up the code and docs some, re-built with Cython 20.1

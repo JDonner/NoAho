@@ -58,10 +58,6 @@ struct Node {
    , ifailure_state(0)
    , payload(payload)
    // 1 is the initial reserve; it will grow automatically.
-   // Danny Yoo has the right idea, of using a linear search
-   // when the number of children is small (his cutoff: <= 3)
-   // The result is still O(1), as it's an upper-bounded length.
-   // Above that length of course it falls back to a hash map.
    , children(1)
    {}
 
@@ -91,8 +87,7 @@ struct Node {
 
 std::ostream& operator<<(std::ostream& os, Node const& node);
 
-class AhoCorasickTrie
-{
+class AhoCorasickTrie {
 public:
    typedef typename Node::Index Index;
    typedef std::vector<AC_CHAR_TYPE> Chars;
@@ -100,8 +95,7 @@ public:
 
 public:
    AhoCorasickTrie()
-   : is_compiled(false)
-   {
+   : is_compiled(false) {
       // born with root node
       nodes.push_back(Node());
    }

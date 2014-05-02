@@ -40,14 +40,18 @@ Bug reports and patches welcome of course!
 
 
 To build and install, use either
+  pip install noaho
+or
   # Python 2
-  python setup.py install # (or ... build, and copy the .so to where you want it)
+  python2 setup.py install # (or ... build, and copy the .so to where you want it)
+  pip install
 or
   # Python 3
   python3 setup.py install # (or ... build, and copy the .so to where you want it)
 
+
 API:
-    from noaho.noaho import NoAho
+    from noaho import NoAho
     trie = NoAho()
 'text' below applies to str and unicode in Python 2, or unicode in Python 3 (all there is)
     trie.add(key_text, optional payload)
@@ -98,20 +102,28 @@ The 'find[all]_short' forms are named as long and awkwardly as they are,
 to leave plain 'find[all]' free if overlapping matches are ever implemented.
 
 
-Deep Rebuilding:
-(Needs C++ and Cython.)
-
-You should not need to use Cython to build and use this module, but if
-you want to change it and regenerate, there's a build command line at
-the top of noaho.pyx.  To allow the generated noaho.cpp file to be
-used in both Py2 and Py3, use a Python 3-built Cython. This was built
-with Cython-0.15.1, but even as far back as 0.13 should work (for that
-version though, you'd have to manually use a c++ compiler to do the
-last step, of linking).
-
-
 For the fullest spec of what the code will and will not do, check out
-test-noaho.py (python[3] test-noaho.py)
+test-noaho.py (run it with: python[3] test-noaho.py)
 
 Untested: whether the payload handling is complete, ie that there are no
 memory leaks. It should be correct though.
+
+
+Regenerating the Wrapper:
+- Needs a C++ compiler and Cython.
+
+You should not need to use Cython to build and use this module, but if
+you want to make changes to the module itself, there is a script:
+
+  test-all-configurations.sh
+
+which should with minor configuration tweaking, rebuild and test
+against both python 2 and 3. It assumes you've made a couple of
+virtualenvs, and have a Cython tarball in the top directory.  Note
+that the python you used to install Cython should be the same as the
+one you use to do the regeneration, because the regeneration setup
+includes a module Cython.Distutils, from the installation.
+
+Cython generates python-wrapper noaho.cpp from noaho.pyx (be careful
+to distinguish it from the misnamed array-aho.* (it uses hash tables),
+which is the original C++ code).

@@ -3,15 +3,19 @@ from distutils.extension import Extension
 
 noaho_module = Extension(
     "noaho",
-    sources=["noaho/noaho.cpp", "noaho/array-aho.cpp"],
+    sources=[
+      # Cython generated
+      "noaho.cpp",
+      # original
+      "array-aho.cpp"],
     depends=[
-        "noaho/array-aho.h",
-        "noaho/HashMap.h",
-        "noaho/LinearHashTable.h",
-        'noaho/noaho.pyx']
+        "array-aho.h",
+        "HashMap.h",
+        "LinearHashTable.h",
+        'noaho.pyx']
 )
 
-version = "0.9.03"
+version = "0.9.4"
 
 setup(
     name="NoAho",
@@ -23,7 +27,7 @@ setup(
     url="https://github.com/JDonner/NoAho",
     download_url="http://pypi.python.org/packages/source/N/NoAho/NoAho-%s.tar.gz" % version,
     description="Fast, non-overlapping simultaneous multiple keyword search",
-    long_description=open('README.txt').read(),
+    long_description=open('../README.txt').read(),
     ext_modules=[noaho_module],
     classifiers=[
         'Intended Audience :: Developers',
@@ -33,12 +37,13 @@ setup(
         'Programming Language :: C++',
         'Programming Language :: Cython',
         'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.6',
         'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.0',
         'Programming Language :: Python :: 3.1',
         'Programming Language :: Python :: 3.2',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
         'Operating System :: OS Independent',
         "Environment :: Console",
         'Topic :: Text Processing',

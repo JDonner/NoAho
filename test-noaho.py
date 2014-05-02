@@ -9,7 +9,7 @@ Jeff Donner, jeffrey.donner@gmail.com
 """
 
 import sys
-from noaho.noaho import NoAho
+from noaho import NoAho
 import unittest
 
 
@@ -224,7 +224,7 @@ class AhoCorasickTest(unittest.TestCase):
         self.assertEqual(set("Harry", "Hermione", "Ron"), set(self.tree.keys()))
 
 
-    # reminder that we need to implement this
+    # reminder that we need to implement findall_short
     @unittest.expectedFailure
     def test_subset(self):
         self.tree.add("he")
@@ -234,6 +234,7 @@ class AhoCorasickTest(unittest.TestCase):
 
 def main(args):
     unittest.main()
+
 
 if __name__ == '__main__':
     main(sys.argv[1:])

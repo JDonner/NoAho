@@ -1,4 +1,4 @@
-// Copyright (C) 2012 Jeff Donner
+// Copyright (C) 2012, 2014 Jeff Donner
 //
 // Permission is hereby granted, free of charge, to any person
 // obtaining a copy of this software and associated documentation
@@ -33,8 +33,7 @@
 using namespace std;
 
 
-std::ostream& operator<<(std::ostream& os, Node const& node)
-{
+std::ostream& operator<<(std::ostream& os, Node const& node) {
    for (Node::Children::const_iterator i = node.children.begin(),
            end = node.children.end();
         i != end; ++i) {
@@ -47,8 +46,7 @@ std::ostream& operator<<(std::ostream& os, Node const& node)
 }
 
 
-std::ostream& operator<<(std::ostream& os, AhoCorasickTrie::Chars const& text)
-{
+std::ostream& operator<<(std::ostream& os, AhoCorasickTrie::Chars const& text) {
    for (AhoCorasickTrie::Chars::const_iterator i = text.begin(), end = text.end();
         i != end; ++i) {
       os << (char)*i;
@@ -57,8 +55,7 @@ std::ostream& operator<<(std::ostream& os, AhoCorasickTrie::Chars const& text)
 }
 
 
-std::ostream& operator<<(std::ostream& os, AhoCorasickTrie::Strings const& texts)
-{
+std::ostream& operator<<(std::ostream& os, AhoCorasickTrie::Strings const& texts) {
    for (AhoCorasickTrie::Strings::const_iterator i = texts.begin(), end = texts.end();
         i != end; ++i) {
       os << '[' << *i << ']' << endl;
@@ -67,8 +64,7 @@ std::ostream& operator<<(std::ostream& os, AhoCorasickTrie::Strings const& texts
 }
 
 
-AhoCorasickTrie::Chars to_chars(char const* s, int num_ucs4_chars)
-{
+AhoCorasickTrie::Chars to_chars(char const* s, int num_ucs4_chars) {
    AC_CHAR_TYPE const* ucs4 = (AC_CHAR_TYPE const*)s;
    AC_CHAR_TYPE const* u = ucs4;
 
@@ -81,8 +77,7 @@ AhoCorasickTrie::Chars to_chars(char const* s, int num_ucs4_chars)
 
 
 void AhoCorasickTrie::add_string(char const* char_s, size_t n,
-                                 PayloadT payload)
-{
+                                 PayloadT payload) {
    AC_CHAR_TYPE const* c = reinterpret_cast<AC_CHAR_TYPE const*>(char_s);
 
    Index iparent = 0;
@@ -108,8 +103,7 @@ void AhoCorasickTrie::add_string(char const* char_s, size_t n,
 }
 
 
-int AhoCorasickTrie::contains(char const* char_s, size_t n) const
-{
+int AhoCorasickTrie::contains(char const* char_s, size_t n) const {
    AC_CHAR_TYPE const* c = reinterpret_cast<AC_CHAR_TYPE const*>(char_s);
    Index inode = 0;
    for (size_t i = 0; i < n; ++i, ++c) {
@@ -123,8 +117,7 @@ int AhoCorasickTrie::contains(char const* char_s, size_t n) const
 }
 
 
-int AhoCorasickTrie::num_keys() const
-{
+int AhoCorasickTrie::num_keys() const {
    int num = 0;
    for (Nodes::const_iterator it = nodes.begin(), end = nodes.end();
         it != end; ++it) {
@@ -136,8 +129,7 @@ int AhoCorasickTrie::num_keys() const
 }
 
 
-PayloadT AhoCorasickTrie::get_payload(char const* s, size_t n) const
-{
+PayloadT AhoCorasickTrie::get_payload(char const* s, size_t n) const {
    AC_CHAR_TYPE const* ucs4 = (AC_CHAR_TYPE const*)s;
    AC_CHAR_TYPE const* u = ucs4;
 
@@ -156,8 +148,7 @@ PayloadT AhoCorasickTrie::get_payload(char const* s, size_t n) const
 
 // After:
 //   http://www.quretec.com/u/vilo/edu/2005-06/Text_Algorithms/index.cgi?f=L2_Multiple_String&p=ACpre
-void AhoCorasickTrie::make_failure_links()
-{
+void AhoCorasickTrie::make_failure_links() {
    queue<Node*> q;
    for (Node::Children::const_iterator i = nodes[(Index)0].children.begin(),
            end = nodes[(Index)0].children.end();
@@ -197,8 +188,7 @@ void AhoCorasickTrie::make_failure_links()
 }
 
 
-void AhoCorasickTrie::clear_failure_links()
-{
+void AhoCorasickTrie::clear_failure_links() {
    for (Nodes::iterator i = nodes.begin(), end = nodes.end();
         i != end; ++i) {
       i->ifailure_state = (Index)0;
@@ -211,8 +201,7 @@ void AhoCorasickTrie::clear_failure_links()
 
 PayloadT AhoCorasickTrie::find_short(char const* char_s, size_t n,
                                      int* inout_istart,
-                                     int* out_iend)
-{
+                                     int* out_iend) {
    ensure_compiled();
    Index istate = 0;
    PayloadT last_payload = 0;
@@ -250,8 +239,7 @@ PayloadT AhoCorasickTrie::find_short(char const* char_s, size_t n,
 
 PayloadT AhoCorasickTrie::find_longest(char const* char_s, size_t n,
                                        int* inout_istart,
-                                       int* out_iend)
-{
+                                       int* out_iend) {
    ensure_compiled();
    Index istate = 0;
    bool have_match = false;
@@ -288,8 +276,7 @@ PayloadT AhoCorasickTrie::find_longest(char const* char_s, size_t n,
 AhoCorasickTrie::Strings
 AhoCorasickTrie::follow_failure_chain(Node::Index inode,
                                       AhoCorasickTrie::Chars chars, int istart,
-                                      int ifound_at) const
-{
+                                      int ifound_at) const {
    typedef vector<AC_CHAR_TYPE> Chars;
    Strings strings;
 
@@ -312,8 +299,7 @@ cout << lo << ".." << hi << endl;
 
 
 // For debugging.
-void AhoCorasickTrie::print() const
-{
+void AhoCorasickTrie::print() const {
    typedef pair<AC_CHAR_TYPE, Index> Pair;
    queue<Pair> q;
    q.push(make_pair((AC_CHAR_TYPE)'@', 0));
@@ -324,8 +310,7 @@ void AhoCorasickTrie::print() const
       if (f == '$') {
          cout << endl;
          continue;
-      }
-      else {
+      } else {
          cout << (char)p.first << " ";
       }
       Index inode = p.second;
