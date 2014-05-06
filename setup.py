@@ -5,17 +5,17 @@ noaho_module = Extension(
     'noaho',
     sources=[
       # Cython generated
-      'noaho/noaho.cpp',
+      'src/noaho.cpp',
       # original
-      'noaho/array-aho.cpp'],
+      'src/array-aho.cpp'],
     depends=[
-        'noaho/array-aho.h',
-        'noaho/HashMap.h',
-        'noaho/LinearHashTable.h',
-        'noaho/noaho.pyx']
+        'src/array-aho.h',
+        'src/HashMap.h',
+        'src/LinearHashTable.h',
+        'src/noaho.pyx']
 )
 
-version = '0.9.4'
+version = '0.9.4.2'
 
 setup(
     name='NoAho',
