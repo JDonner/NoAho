@@ -4,6 +4,7 @@ from Cython.Distutils import build_ext
 
 # run with:
 # python cython-regenerate-noaho-setup.py build_ext --inplace
+# - the 'mv' is because pypi wants
 
 setup(ext_modules=[
   Extension('noaho',               # name of extension
