@@ -2,38 +2,38 @@ from distutils.core import setup
 from distutils.extension import Extension
 
 noaho_module = Extension(
-    "noaho",
+    'noaho',
     sources=[
       # Cython generated
-      "noaho.cpp",
+      'noaho/noaho.cpp',
       # original
-      "array-aho.cpp"],
+      'noaho/array-aho.cpp'],
     depends=[
-        "array-aho.h",
-        "HashMap.h",
-        "LinearHashTable.h",
-        'noaho.pyx']
+        'noaho/array-aho.h',
+        'noaho/HashMap.h',
+        'noaho/LinearHashTable.h',
+        'noaho/noaho.pyx']
 )
 
-version = "0.9.4"
+version = '0.9.4'
 
 setup(
-    name="NoAho",
+    name='NoAho',
     version=version,
-    author="Jeff Donner",
-    author_email="jeffrey.donner@gmail.com",
-    maintainer="Jeff Donner",
-    maintainer_email="jeffrey.donner@gmail.com",
-    url="https://github.com/JDonner/NoAho",
-    download_url="http://pypi.python.org/packages/source/N/NoAho/NoAho-%s.tar.gz" % version,
-    description="Fast, non-overlapping simultaneous multiple keyword search",
-    long_description=open('../README.txt').read(),
+    author='Jeff Donner',
+    author_email='jeffrey.donner@gmail.com',
+    maintainer='Jeff Donner',
+    maintainer_email='jeffrey.donner@gmail.com',
+    url='https://github.com/JDonner/NoAho',
+    download_url='http://pypi.python.org/packages/source/N/NoAho/NoAho-%s.tar.gz' % version,
+    description='Fast, non-overlapping simultaneous multiple keyword search',
+    long_description=open('README.txt').read(),
     ext_modules=[noaho_module],
     classifiers=[
         'Intended Audience :: Developers',
         'Intended Audience :: Information Technology',
         'License :: OSI Approved :: MIT License',
-        "Development Status :: 4 - Beta",
+        'Development Status :: 4 - Beta',
         'Programming Language :: C++',
         'Programming Language :: Cython',
         'Programming Language :: Python :: 2',
@@ -45,7 +45,7 @@ setup(
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
         'Operating System :: OS Independent',
-        "Environment :: Console",
+        'Environment :: Console',
         'Topic :: Text Processing',
     ]
 )

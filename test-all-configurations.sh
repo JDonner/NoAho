@@ -3,6 +3,7 @@
 # because 'workon' is a bash function (from virtualenvwrapper)
 # and won't propagate into a new shell.
 
+# set -e
 
 # Your work directory
 ROOT_DIR=~/projects/noaho-2014-04-26/noaho
@@ -11,6 +12,7 @@ NOAHO_DIR=${ROOT_DIR}/noaho
 NOAHO_WRAPPER=${NOAHO_DIR}/noaho.cpp
 LOGFILE=${ROOT_DIR}/test-results.log
 VERSIONED_CYTHON="Cython-0.20.1"
+VIRTUAL_ENV_NAME="noaho_setup"
 
 
 log () {
@@ -25,9 +27,9 @@ install_cython () {
     cd ${ROOT_DIR}
     rm -rf ${VERSIONED_CYTHON}
     # Expects a Cython tarball in $ROOT_DIR
-    tar zxvf ${VERSIONED_CYTHON}.tar.gz
+    tar zxvf ${VERSIONED_CYTHON}.tar.gz || { echo "no Cython tarball" $LOGFILE 2>&1; return 1; }
     cd ${VERSIONED_CYTHON}
-    ${py} setup.py install
+    ${py} setup.py install || { echo "Cython installation failed" $LOGFILE 2>&1; return 1; }
     cd -
     rm -rf $VERSIONED_CYTHON
     log "Haz cython"
@@ -38,14 +40,14 @@ cython_noaho () {
     log "Cythoning noaho"
     py="$1"
     clean_all
-    cd $NOAHO_DIR
     if [[ -e $NOAHO_WRAPPER ]]
     then
         log "Oook; failed to get rid of $NOAHO_WRAPPER"
     fi
     log "expect $NOAHO_WRAPPER to be absent..."
     log $(ls $NOAHO_WRAPPER)
-    ${py} ../cython-regenerate-noaho-setup.py build_ext --inplace
+    cd $NOAHO_DIR
+    ${py} ../cython-regenerate-noaho-setup.py build_ext --inplace || { echo "regeneration failed" $LOGFILE 2>&1 ; return 1; }
     if [[ ! -e $NOAHO_WRAPPER ]]
     then
         log "Failed to generate $NOAHO_WRAPPER"
@@ -63,24 +65,15 @@ setup_install_noaho () {
     py="$1"
     cd ${NOAHO_DIR}
     clean_build
-    ${py} ${ROOT_DIR}/setup.py install
+    cd ${ROOT_DIR}
+    ${py} setup.py install || { echo "noaho installation failed" $LOGFILE 2>&1; return 1; }
 }
-
-
-#pip_install_noaho () {
-#    log "pip installing noaho"
-#    py="$1"
-#    cd ${NOAHO_DIR}
-#    clean_build
-#    ${py} setup.py install
-#    cd ${ROOT_DIR}
-#}
 
 
 test_noaho () {
     py="$1"
     log "testing..."
-    ${py} ${ROOT_DIR}/test-noaho.py >> ${LOGFILE} 2>&1
+    ${py} ${ROOT_DIR}/test-noaho.py >> ${LOGFILE} 2>&1 || { echo "noaho test failed" $LOGFILE 2>&1 ; return 1; }
     log "Done"
 }
 
@@ -94,70 +87,58 @@ clean_all () {
     rm -f $NOAHO_WRAPPER
 }
 
-clean_up () {
-    clean_all
-    deactivate
-}
 
+clean_all
 # clean test log
 rm -f ${LOGFILE}
 
-
-# Python 2, distutils (setup.py)
-py="python2"
-cd ${ROOT_DIR}
-CONFIG="noaho-p2-setup"
-workon $CONFIG
-install_cython ${py}
-# We must use the 'target' python, because the process imports a Cython module
-cython_noaho ${py}
-setup_install_noaho ${py}
-clean_all
-test_noaho ${py}
-#read -p "Done $CONFIG" yn
-clean_up
-
-
-## Python 2, pip
-#py="python2"
-#cd ${ROOT_DIR}
-#CONFIG="noaho-p2-pip"
-#workon $CONFIG
-#install_cython ${py}
-#cython_noaho ${py}
-#pip_install_noaho ${py}
-#clean_all
-#test_noaho ${py}
-##read -p "Done $CONFIG" yn
-#clean_up
+# Don't give these full paths - in the beginning they refer to the system python,
+# later to the virtualenv version
+for py in "python2" "python3"
+do
+    log "testing $py"
+    mkvirtualenv --python=${py} $VIRTUAL_ENV_NAME
+    log "making venv $VIRTUAL_ENV_NAME"
+    cd ${ROOT_DIR}
+    CONFIG=$VIRTUAL_ENV_NAME
+    workon $CONFIG
+    install_cython ${py}
+    # We must use the 'target' python, because the process imports a Cython module
+    cython_noaho ${py}
+    setup_install_noaho ${py}
+    clean_all
+    test_noaho ${py}
+    #read -p "Done $CONFIG" yn
+    clean_all
+    deactivate
+    rmvirtualenv $VIRTUAL_ENV_NAME
+    log "removed venv $VIRTUAL_ENV_NAME"
+done
 
 
 # Python 3, distutils (setup.py)
-py="python3"
-cd ${ROOT_DIR}
-CONFIG="noaho-p3-setup"
-workon $CONFIG
-install_cython ${py}
-cython_noaho ${py}
-setup_install_noaho ${py}
-clean_all
-test_noaho ${py}
-#read -p "Done $CONFIG" yn
-clean_up
-
-
-## Python 3, pip
 #py="python3"
+#mkvirtualenv --python=${py} $VIRTUAL_ENV_NAME
 #cd ${ROOT_DIR}
-#CONFIG="noaho-p3-pip"
+#CONFIG=$VIRTUAL_ENV_NAME
 #workon $CONFIG
 #install_cython ${py}
 #cython_noaho ${py}
-#pip_install_noaho ${py}
+#setup_install_noaho ${py}
 #clean_all
 #test_noaho ${py}
 ##read -p "Done $CONFIG" yn
 #clean_up
+#deactivate
+#rmvirtualenv $VIRTUAL_ENV_NAME
+
+
+on_exit () {
+    log "SCRIPT FAILURE"
+}
+
+# trap errors
+trap on_exit EXIT
 
 cat ${ROOT_DIR}/test-results.log
 cd ${ROOT_DIR}
