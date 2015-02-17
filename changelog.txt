@@ -1,3 +1,8 @@
+2015-02-17, 0.9.5
+* Fixed bug where find_longest took the /last/ key-match from a contiguous
+  sequence of key-matches, rather than the longest one.
+* Updated to Cython 22.0 for no reason.
+
 2014-05-01, 0.9.4
 * Incorporated setup.py change from Balthazar Roubero to make it install
   properly with pip.

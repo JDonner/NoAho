@@ -236,16 +236,37 @@ PayloadT AhoCorasickTrie::find_short(char const* char_s, size_t n,
    return last_payload;
 }
 
-
+/*
+ * <char_s> is the original material,
+ * <n> its length.
+ * <inout_istart> is offset from char_s, part of the caller's traversal
+ *   state, to let zer get multiple matches from the same text.
+ * <out_iend> one-past-the-last offset from <char_s> of /this/ match, the
+ *   mate to <inout_istart>.
+ *
+ * Does not itself assure that the match bounds point to nothing (ie end ==
+ * start) when nothing is found. The caller must do that (and the Python
+ * interface, and the gtests do that.
+ *
+ * When there are multiple contiguous terminal nodes (keywords that end at some
+ * spot) multiple calls of this will be O(n^2) in that contiguous length - it
+ * looks through all contiguous matches to find the longest one before returning
+ * anything.
+ */
 PayloadT AhoCorasickTrie::find_longest(char const* char_s, size_t n,
                                        int* inout_istart,
                                        int* out_iend) {
+   // longest terminal length, among a contiguous bunch of terminals.
+   int length_longest = -1;
+   int end_longest = -1;
+
    ensure_compiled();
    Index istate = 0;
    bool have_match = false;
 
    PayloadT payload = 0;
-   AC_CHAR_TYPE const* original_start = reinterpret_cast<AC_CHAR_TYPE const*>(char_s);
+   AC_CHAR_TYPE const* original_start =
+      reinterpret_cast<AC_CHAR_TYPE const*>(char_s);
    AC_CHAR_TYPE const* start = original_start + *inout_istart;
    AC_CHAR_TYPE const* end = original_start + n;
 
@@ -253,21 +274,30 @@ PayloadT AhoCorasickTrie::find_longest(char const* char_s, size_t n,
       Index ichild = this->child_at(istate, *c);
       while (not is_valid(ichild)) {
          if (have_match) {
-            return payload;
+            goto success;
          }
          istate = nodes[istate].ifailure_state;
          ichild = this->child_at(istate, *c);
       }
 
       istate = ichild;
-      if (nodes[istate].length and nodes[istate].length <= c + 1 - start) {
+      int keylen = nodes[istate].length;
+      if (keylen &&
+          // not sure this 2nd condition is necessary
+          keylen <= c + 1 - start &&
+          length_longest < keylen) {
          have_match = true;
-         *out_iend = c - original_start + 1;
-         *inout_istart = *out_iend - nodes[istate].length;
+
+         length_longest = keylen;
+         end_longest = c + 1 - original_start;
          payload = nodes[istate].payload;
       }
    }
-
+   if (have_match) {
+success:
+      *out_iend = end_longest;
+      *inout_istart = *out_iend - length_longest;
+   }
    return payload;
 }
 

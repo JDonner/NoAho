@@ -2,16 +2,18 @@
 #   . test-all-configurations.bash
 # because 'workon' is a bash function (from virtualenvwrapper)
 # and won't propagate into a new shell.
+# Wants /usr/local/lib/py* to be user-writable, also
+# /usr/local/bin
 
 # set -e
 
 # Your work directory
-ROOT_DIR=~/projects/noaho-2014-04-26/noaho
+ROOT_DIR=~/projects/noaho-2015-01-16/noaho
 SRC_DIR=${ROOT_DIR}/src
 # noaho.cpp is the python wrapper that Cython generates
 NOAHO_WRAPPER=${SRC_DIR}/noaho.cpp
 LOGFILE=${ROOT_DIR}/test-results.log
-VERSIONED_CYTHON="Cython-0.20.1"
+VERSIONED_CYTHON="Cython-0.22"
 VIRTUAL_ENV_NAME="noaho-test-venv"
 
 

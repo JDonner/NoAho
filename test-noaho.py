@@ -127,6 +127,16 @@ class AhoCorasickTest(unittest.TestCase):
         self.assertEqual([],
                          list(self.tree.findall_long("no pascal here")))
 
+    def test_bug_no_2_competing_longests(self):
+        """Previously we'd return the /last/ key found, now we look forward
+        while there are contiguous candidate keys, and actually return the
+        longest.
+        """
+        self.tree.add('cisco', 'cisco')
+        self.tree.add('em', 'em')
+        self.tree.add('cisco systems australia', 'cisco systems')
+        self.assertEqual([(0, 5, 'cisco'), (10, 12, 'em')],
+                         list(self.tree.findall_long('cisco systems')))
 
     def test_add_and_find_mix_freely(self):
         text = """We got pickles and crocks, We got bagels and lox"""
