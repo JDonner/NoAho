@@ -1,6 +1,10 @@
+2015-02-20, 0.9.6
+* No longer make a terminal node out of every node with a failure node
+  that /goes to/ a terminal, fixing bug 3, which is hard to characterize.
+
 2015-02-17, 0.9.5
-* Fixed bug where find_longest took the /last/ key-match from a contiguous
-  sequence of key-matches, rather than the longest one.
+* Fixed bug 2 where find_longest took the /last/ key-match from a
+  contiguous sequence of key-matches, rather than the longest one.
 * Updated to Cython 22.0 for no reason.
 
 2014-05-01, 0.9.4

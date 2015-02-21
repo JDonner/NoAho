@@ -8,7 +8,7 @@
 # set -e
 
 # Your work directory
-ROOT_DIR=~/projects/noaho-2015-01-16/noaho
+ROOT_DIR=~/projects/noaho-2015-02-16/noaho
 SRC_DIR=${ROOT_DIR}/src
 # noaho.cpp is the python wrapper that Cython generates
 NOAHO_WRAPPER=${SRC_DIR}/noaho.cpp

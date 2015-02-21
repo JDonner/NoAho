@@ -127,7 +127,7 @@ class AhoCorasickTest(unittest.TestCase):
         self.assertEqual([],
                          list(self.tree.findall_long("no pascal here")))
 
-    def test_bug_no_2_competing_longests(self):
+    def test_bug2_competing_longests(self):
         """Previously we'd return the /last/ key found, now we look forward
         while there are contiguous candidate keys, and actually return the
         longest.
@@ -138,13 +138,19 @@ class AhoCorasickTest(unittest.TestCase):
         self.assertEqual([(0, 5, 'cisco'), (10, 12, 'em')],
                          list(self.tree.findall_long('cisco systems')))
 
+    def test_bug3_false_terminal_nodes(self):
+      self.tree.add('an', None)
+      self.tree.add('canal', None)
+      self.tree.add('e can oilfield', None)
+      self.assertEqual([(4, 4+5, None)],
+                       list(self.tree.findall_long('one canal')))
+
     def test_add_and_find_mix_freely(self):
         text = """We got pickles and crocks, We got bagels and lox"""
         self.tree.add('lox')
         self.assertEqual((45, 48, None), self.tree.find_long(text))
         self.tree.add('pickles')
         self.assertEqual((7, 14, None), self.tree.find_long(text))
-
 
     def test_explicit_compilation_still_ok(self):
         # ... but vestigial

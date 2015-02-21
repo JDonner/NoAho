@@ -176,11 +176,6 @@ void AhoCorasickTrie::make_failure_links() {
             ifail_child = this->child_at(ifail_state, a);
          }
          s->ifailure_state = ifail_child;
-
-         if (not s->length) {
-            s->length = nodes[s->ifailure_state].length;
-            s->payload = nodes[s->ifailure_state].payload;
-         }
       }
    }
 
