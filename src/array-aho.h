@@ -89,7 +89,7 @@ std::ostream& operator<<(std::ostream& os, Node const& node);
 
 class AhoCorasickTrie {
 public:
-   typedef typename Node::Index Index;
+   typedef Node::Index Index;
    typedef std::vector<AC_CHAR_TYPE> Chars;
    typedef std::vector<Chars> Strings;
 

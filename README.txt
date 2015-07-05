@@ -3,14 +3,13 @@ Non-Overlapping Aho-Corasick Trie
 Features:
 - 'short' and 'long' (longest matching key) searches, both one-off and
   iteration over all non-overlapping keyword matches in some text.
-- Works with both unicode and str in Python 2, and unicode in Python 3.
-  NOTE: As everything is simply single UCS4 / UTF-32 codepoints under the
-  hood, all substrings and input unicode must be normalized, ie any separate modifying marks must be
-  folded into each codepoint. See:
+- Works with both unicode and str in Python 2, and unicode in Python 3.  NOTE:
+  As everything is simply single UCS4 / UTF-32 codepoints under the hood, all
+  substrings and input unicode must be normalized, ie any separate modifying
+  marks must be folded into each codepoint. See:
      http://stackoverflow.com/questions/16467479/normalizing-unicode
   Or, theoretically, you could put into the tree all forms of the
-  keywords you expect to see in your text. This is untested but it
-  would probably work.
+  keywords you expect to see in your text.
 - Allows you to associate an arbitrary Python object payload with each
   keyword, and supports dict operations len(), [], and 'in' for the
   keywords (though no del or traversal).
@@ -22,21 +21,21 @@ Features:
   somehow need a different license, ask me, I mean for it to be used).
 
 Anti-Features:
-- Will not find overlapped keywords (eg given keywords "abcde" and
-  'defgh", will not find "defgh" in "abcdefgh"; would find both in
-  "abcdedefgh"), unless you move along the string manually, one
-  character at a time, which would defeat the purpose. The package
-  'Acora' is an alternative package for this use.
+- Will not find overlapped keywords (eg given keywords 'abc' and 'cdef', will
+  not find 'cdef' in 'abcdef'. Any full Aho-Corasick implementation would give
+  you both. The package 'Acora' is an alternative package for this use.  (noaho
+  can be relatively easily modified to be a normal Aho-Corasick, but it wasn't
+  what I personally needed.)
 - Lacking overlap, find[all]_short is kind of useless.
-- Lacks key iteration and deletion from the mapping (dict) protocol
-- Memory leaking untested (should be ok but ...)
+- Lacks key iteration and deletion from the mapping (dict) protocol.
+- Memory leaking untested (one run under valgrind turned up nothing, but it
+  wasn't extensive).
 - No /testcase/ for unicode in Python 2 (did manual test however)
-- Unicode chars represented as ucs4, and, each character has its own
-  hashtable, so it's relatively memory-heavy, but that's life nowadays.
-- Requires a C++ compiler.
+  Unicode chars represented as ucs4, and, each character has its own hashtable,
+  so it's relatively memory-heavy (see 'Ways to Reduce Memory Use' below).
+- Requires a C++ compiler (C++98 support is enough).
 
 Bug reports and patches welcome of course!
-
 
 
 To build and install, use either
@@ -109,21 +108,44 @@ Untested: whether the payload handling is complete, ie that there are no
 memory leaks. It should be correct though.
 
 
-Regenerating the Wrapper:
-- Needs a C++ compiler and Cython.
+Regenerating the Python Wrapper:
+- Needs a C++ compiler (C++98 is fine) and Cython.
 
-You should not need to use Cython to build and use this module, but if
+You do not need to rebuild the Cython wrapper (the generated noaho.cpp), but if
 you want to make changes to the module itself, there is a script:
 
   test-all-configurations.sh
 
-which should with minor configuration tweaking, rebuild and test
-against both python 2 and 3. It assumes you've made a couple of
-virtualenvs, and have a Cython tarball in the top directory.  Note
-that the python you used to install Cython should be the same as the
-one you use to do the regeneration, because the regeneration setup
-includes a module Cython.Distutils, from the installation.
+which will, with minor configuration tweaking, rebuild and test against both
+python 2 and 3. It requires you to have a Cython tarball in the top directory.
+Note that the python you used to install Cython should be the same as the one
+you use to do the regeneration, because the regeneration setup includes a module
+Cython.Distutils, from the installation.
 
 Cython generates python-wrapper noaho.cpp from noaho.pyx (be careful
 to distinguish it from the misnamed array-aho.* (it uses hash tables),
 which is the original C++ code).
+
+Ways to Reduce Memory Use:
+One of its aims is to handle Unicode, which means you have to accommodate a huge
+branching factor, thus the hashtable (a full array would be out of the
+question). Ways to attack memory size might be, to either force very
+conservative hashtable growth, or, once the trie is complete (in 'compile', say)
+go through the tree and replace the hashtables with just-the-right-size arrays -
+linear scan / binary search should be fast enough if small enough, and take less
+memory. If you're willing to do a linear scan at that point, you could switch to
+UTF-8, too, saving quite a bit of memory. Danny Yoo's original code I think just
+started out as arrays and would grow to hashtables when needed.
+
+Also, if all you need is ASCII, you could re-define AC_CHAR_TYPE to be 'char'.
+I've tried to be careful to use AC_CHAR_TYPE consistently, but you'd probably
+want to go through the code to make sure if you're going to rely on this. Python
+3 uses Unicode internally though and would do a lot of conversions anyway.
+Otherwise, I don't trust my knowledge of Unicode enough to try to play games
+with storing fewer bits.
+
+In the Hopper:
+I have a case-insensitive version (the easiest thing is just to downcase
+everything you add or search for in noaho.pyx), and, one that will only yield
+keywords at word boundaries, thanks to Python's unicode character classes.
+(However, this second is a bit raw, and you can do it manually anyway.)

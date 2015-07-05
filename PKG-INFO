@@ -1,11 +1,11 @@
 Metadata-Version: 1.0
-Version: 0.9.4.2
+Version: 0.9.6.1
 Summary: Fast, non-overlapping simultaneous multiple keyword search
 Home-Page: "http://pypi.python.org/pypi/noaho"
 Author: Jeff Donner
 Author-email: jeffrey.donner@gmail.com
 License: MIT
-Download-URL: http://pypi.python.org/packages/source/n/noaho/noaho-0.9.4.2.tar.gz
+Download-URL: http://pypi.python.org/packages/source/n/noaho/noaho-0.9.6.1.tar.gz
 Description: NoAho
 Does fast, simultaneous multi-keyword search using the Aho Corasick
 algorithm, except that if keywords overlap in the target text, only

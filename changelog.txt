@@ -1,3 +1,6 @@
+2015-07-04, 0.9.6.1
+* removed extraneous use of 'typename' in array-aho.h:92
+
 2015-02-20, 0.9.6
 * No longer make a terminal node out of every node with a failure node
   that /goes to/ a terminal, fixing bug 3, which is hard to characterize.
